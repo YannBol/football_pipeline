@@ -3,12 +3,10 @@ import pandas as pd
 from datetime import datetime
 from sqlalchemy import create_engine
 
-# --- CONFIG ---
-API_TOKEN = "79df369c68fa417296dfdb3a5986ef6d"  # remplace par ton token
-TEAM_ID = 64  # Exemple : Liverpool
+API_TOKEN = "79df369c68fa417296dfdb3a5986ef6d" 
+TEAM_ID = 64 
 DB_URI = "postgresql+psycopg2://postgres:postgres@localhost:5432/football"
 
-# --- FONCTION POUR CALCULER L'AGE ---
 def calculate_age(birthdate_str):
     if not birthdate_str:
         return None
@@ -16,7 +14,6 @@ def calculate_age(birthdate_str):
     today = datetime.today()
     return today.year - birthdate.year - ((today.month, today.day) < (birthdate.month, birthdate.day))
 
-# --- Récupérer les joueurs d'une équipe ---
 url = f"https://api.football-data.org/v4/teams/{66}"
 headers = {"X-Auth-Token": API_TOKEN}
 
@@ -35,13 +32,6 @@ for player in data.get("squad", []):
         "age": calculate_age(player.get("dateOfBirth")),
     })
 
-# --- Créer un DataFrame ---
 df_players = pd.DataFrame(players_list)
 
-# --- Afficher un aperçu ---
 print(df_players.head(20))
-
-# # --- Insérer dans PostgreSQL ---
-# engine = create_engine(DB_URI)
-# df_players.to_sql("players", engine, if_exists="replace", index=False)
-# print("✅ Les joueurs ont été importés dans la table 'players'.")
